@@ -18,15 +18,27 @@
 		return found ? found.id : 'dark';
 	}
 
-	function initSidebar(): boolean {
-		if (typeof window === 'undefined') return true;
-		return window.innerWidth >= 1080;
+	const SIDEBAR_BREAKPOINT = 1080;
+
+	function isWide(): boolean {
+		return typeof window === 'undefined' || window.innerWidth >= SIDEBAR_BREAKPOINT;
 	}
 
 	let theme = $state(initTheme());
-	let sidebarVisible = $state(initSidebar());
+	let sidebarVisible = $state(isWide());
 	let themePopupOpen = $state(false);
 	let themeMenu = $state<HTMLElement>();
+
+	// 화면 너비가 브레이크포인트를 넘나들 때만 사이드바를 기본값으로 스냅
+	// (그 사이의 수동 토글은 유지)
+	let wasWide = isWide();
+	function onWindowResize() {
+		const wide = isWide();
+		if (wide !== wasWide) {
+			wasWide = wide;
+			sidebarVisible = wide;
+		}
+	}
 
 	function isActive(postId: string): boolean {
 		return page.url.pathname === `/posts/${postId}`;
@@ -50,7 +62,7 @@
 	}
 
 	function closeSidebarOnMobile() {
-		if (typeof window !== 'undefined' && window.innerWidth < 1080) {
+		if (!isWide()) {
 			sidebarVisible = false;
 		}
 	}
@@ -69,7 +81,11 @@
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
-<svelte:window onpointerdown={onWindowPointerDown} onkeydown={onWindowKeydown} />
+<svelte:window
+	onresize={onWindowResize}
+	onpointerdown={onWindowPointerDown}
+	onkeydown={onWindowKeydown}
+/>
 
 <div class="book" class:sidebar-visible={sidebarVisible}>
 	<nav class="sidebar" aria-label="목차">
