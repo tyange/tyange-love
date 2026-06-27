@@ -111,7 +111,7 @@ code {
 	overscroll-behavior-y: contain;
 	background-color: var(--sidebar-bg);
 	color: var(--sidebar-fg);
-	z-index: 30;
+	z-index: 120;
 	transform: translateX(calc(0px - var(--sidebar-width)));
 	transition: transform 0.3s;
 }
@@ -182,23 +182,14 @@ code {
 	box-sizing: border-box;
 	background-color: var(--bg);
 	min-height: 100vh;
+	transition: margin-left 0.3s ease;
 }
 
-.page-wrapper {
-	transition:
-		margin-left 0.3s ease,
-		transform 0.3s ease;
-}
-
-@media only screen and (min-width: 620px) {
+/* 넓은 화면(≥1080px): 사이드바가 본문을 옆으로 밀어 나란히 배치.
+   그 이하: 사이드바를 본문 위로 띄우는 오버레이(아래 .sidebar는 fixed). */
+@media only screen and (min-width: 1080px) {
 	.book.sidebar-visible .page-wrapper {
 		margin-inline-start: var(--sidebar-width);
-	}
-}
-
-@media only screen and (max-width: 619px) {
-	.book.sidebar-visible .page-wrapper {
-		transform: translateX(var(--sidebar-width));
 	}
 }
 
@@ -440,7 +431,7 @@ code {
 }
 
 /* 사이드바가 열려 있으면 이전 화살표를 사이드바 오른쪽으로 */
-@media only screen and (min-width: 620px) {
+@media only screen and (min-width: 1080px) {
 	.book.sidebar-visible .nav-chapters.previous {
 		left: var(--sidebar-width);
 	}
@@ -505,7 +496,8 @@ code {
 	inset: 0;
 	background: var(--overlay-bg);
 	border: none;
-	z-index: 25;
+	/* 사이드바(120) 아래, 메뉴바(101) 위 — 본문과 메뉴바를 함께 덮는다 */
+	z-index: 110;
 }
 
 @media only screen and (max-width: 1080px) {
