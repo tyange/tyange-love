@@ -1,211 +1,539 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
-/* ── 테마 토큰 (다크모드 대응은 추후 토글로) ───────────────── */
+/* ─────────────────────────────────────────────────────────────
+   lovelog — mdBook(Rust Book) UI 재현
+   테마 변수/크롬 스타일은 doc.rust-lang.org/book 의 CSS를 옮긴 것.
+   ───────────────────────────────────────────────────────────── */
+
+/* 레이아웃 상수 */
 :root {
-	--sidebar-width: 300px;
-	--content-max: 44rem;
-	--topbar-height: 3rem;
+	--sidebar-target-width: 300px;
+	--sidebar-width: min(var(--sidebar-target-width), 80vw);
+	--sidebar-resize-indicator-width: 8px;
+	--sidebar-resize-indicator-space: 2px;
+	--page-padding: 15px;
+	--content-max-width: 750px;
+	--menu-bar-height: 50px;
+	--mono-font:
+		'Source Code Pro', Consolas, 'Ubuntu Mono', Menlo, 'DejaVu Sans Mono', monospace, monospace;
+	--body-font:
+		'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI',
+		Roboto, 'Helvetica Neue', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+}
 
-	--bg: #ffffff;
-	--fg: #1a1a1a;
-	--muted: #6b7280;
-	--border: #e5e7eb;
-
+/* ── 테마 (mdBook variables.css 그대로) ───────────────────── */
+.light {
+	--bg: hsl(0, 0%, 100%);
+	--fg: hsl(0, 0%, 0%);
 	--sidebar-bg: #fafafa;
-	--sidebar-fg: #364149;
-	--sidebar-active-bg: #eaecef;
-	--sidebar-active-fg: #1a1a1a;
-
-	--link: #b15c7a;
-	--accent: #b15c7a;
+	--sidebar-fg: hsl(0, 0%, 0%);
+	--sidebar-non-existant: #aaaaaa;
+	--sidebar-active: #1f1fff;
+	--sidebar-spacer: #f4f4f4;
+	--scrollbar: #8f8f8f;
+	--icons: #747474;
+	--icons-hover: #000000;
+	--links: #20609f;
+	--inline-code-color: #301900;
+	--theme-popup-bg: #fafafa;
+	--theme-popup-border: #cccccc;
+	--theme-hover: #e6e6e6;
+	--quote-bg: hsl(197, 37%, 96%);
+	--quote-border: hsl(197, 37%, 91%);
+	--table-border-color: hsl(0, 0%, 95%);
+	--table-header-bg: hsl(0, 0%, 80%);
+	--table-alternate-bg: hsl(0, 0%, 97%);
+	--overlay-bg: rgba(200, 200, 205, 0.4);
+	--sidebar-header-border-color: #6e6edb;
+	--color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--bg: #1a1a1a;
-		--fg: #e8e8e8;
-		--muted: #9aa0a6;
-		--border: #2c2c2c;
-
-		--sidebar-bg: #161819;
-		--sidebar-fg: #c8c9db;
-		--sidebar-active-bg: #2b2c30;
-		--sidebar-active-fg: #ffffff;
-
-		--link: #e69bb4;
-		--accent: #e69bb4;
-	}
+.coal {
+	--bg: hsl(200, 7%, 8%);
+	--fg: #98a3ad;
+	--sidebar-bg: #292c2f;
+	--sidebar-fg: #a1adb8;
+	--sidebar-non-existant: #505254;
+	--sidebar-active: #3473ad;
+	--sidebar-spacer: #393939;
+	--scrollbar: var(--sidebar-fg);
+	--icons: #43484d;
+	--icons-hover: #b3c0cc;
+	--links: #2b79a2;
+	--inline-code-color: #c5c8c6;
+	--theme-popup-bg: #141617;
+	--theme-popup-border: #43484d;
+	--theme-hover: #1f2124;
+	--quote-bg: hsl(234, 21%, 18%);
+	--quote-border: hsl(234, 21%, 23%);
+	--table-border-color: hsl(200, 7%, 13%);
+	--table-header-bg: hsl(200, 7%, 28%);
+	--table-alternate-bg: hsl(200, 7%, 11%);
+	--overlay-bg: rgba(33, 40, 48, 0.4);
+	--sidebar-header-border-color: #3473ad;
+	--color-scheme: dark;
 }
 
-html,
+.navy {
+	--bg: hsl(226, 23%, 11%);
+	--fg: #bcbdd0;
+	--sidebar-bg: #282d3f;
+	--sidebar-fg: #c8c9db;
+	--sidebar-non-existant: #505274;
+	--sidebar-active: #2b79a2;
+	--sidebar-spacer: #2d334f;
+	--scrollbar: var(--sidebar-fg);
+	--icons: #737480;
+	--icons-hover: #b7b9cc;
+	--links: #2b79a2;
+	--inline-code-color: #c5c8c6;
+	--theme-popup-bg: #161923;
+	--theme-popup-border: #737480;
+	--theme-hover: #282e40;
+	--quote-bg: hsl(226, 15%, 17%);
+	--quote-border: hsl(226, 15%, 22%);
+	--table-border-color: hsl(226, 23%, 16%);
+	--table-header-bg: hsl(226, 23%, 31%);
+	--table-alternate-bg: hsl(226, 23%, 14%);
+	--overlay-bg: rgba(33, 40, 48, 0.4);
+	--sidebar-header-border-color: #2f6ab5;
+	--color-scheme: dark;
+}
+
+.rust {
+	--bg: hsl(60, 9%, 87%);
+	--fg: #262625;
+	--sidebar-bg: #3b2e2a;
+	--sidebar-fg: #c8c9db;
+	--sidebar-non-existant: #505254;
+	--sidebar-active: #e69f67;
+	--sidebar-spacer: #45373a;
+	--scrollbar: var(--sidebar-fg);
+	--icons: #737480;
+	--icons-hover: #262625;
+	--links: #2b79a2;
+	--inline-code-color: #6e6b5e;
+	--theme-popup-bg: #e1e1db;
+	--theme-popup-border: #b38f6b;
+	--theme-hover: #99908a;
+	--quote-bg: hsl(60, 5%, 75%);
+	--quote-border: hsl(60, 5%, 70%);
+	--table-border-color: hsl(60, 9%, 82%);
+	--table-header-bg: #b3a497;
+	--table-alternate-bg: hsl(60, 9%, 84%);
+	--overlay-bg: rgba(150, 150, 150, 0.25);
+	--sidebar-header-border-color: #8c391f;
+	--color-scheme: light;
+}
+
+.ayu {
+	--bg: hsl(210, 25%, 8%);
+	--fg: #c5c5c5;
+	--sidebar-bg: #14191f;
+	--sidebar-fg: #c8c9db;
+	--sidebar-non-existant: #5c6773;
+	--sidebar-active: #ffb454;
+	--sidebar-spacer: #2d334f;
+	--scrollbar: var(--sidebar-fg);
+	--icons: #737480;
+	--icons-hover: #b7b9cc;
+	--links: #0096cf;
+	--inline-code-color: #ffb454;
+	--theme-popup-bg: #14191f;
+	--theme-popup-border: #5c6773;
+	--theme-hover: #191f26;
+	--quote-bg: hsl(226, 15%, 17%);
+	--quote-border: hsl(226, 15%, 22%);
+	--table-border-color: hsl(210, 25%, 13%);
+	--table-header-bg: hsl(210, 25%, 28%);
+	--table-alternate-bg: hsl(210, 25%, 11%);
+	--overlay-bg: rgba(33, 40, 48, 0.4);
+	--sidebar-header-border-color: #c18639;
+	--color-scheme: dark;
+}
+
+/* ── 베이스 ───────────────────────────────────────────────── */
+html {
+	font-family: var(--body-font);
+	color: var(--fg);
+	background-color: var(--bg);
+	color-scheme: var(--color-scheme);
+	scrollbar-color: var(--scrollbar) transparent;
+}
+
 body {
 	margin: 0;
-	background: var(--bg);
-	color: var(--fg);
+	font-size: 16px;
+	overflow-x: hidden;
 }
 
-/* ── 전체 골격 ─────────────────────────────────────────── */
+code {
+	font-family: var(--mono-font);
+	font-size: 0.875em;
+}
+
+/* ── 전체 골격 ────────────────────────────────────────────── */
 .book {
 	min-height: 100vh;
 }
 
-/* ── 사이드바 (목차) ───────────────────────────────────── */
+/* ── 사이드바 ─────────────────────────────────────────────── */
 .sidebar {
 	position: fixed;
-	top: 0;
 	left: 0;
+	top: 0;
+	bottom: 0;
 	width: var(--sidebar-width);
-	height: 100vh;
-	overflow-y: auto;
-	background: var(--sidebar-bg);
-	border-right: 1px solid var(--border);
+	font-size: 0.875em;
+	box-sizing: border-box;
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior-y: contain;
+	background-color: var(--sidebar-bg);
+	color: var(--sidebar-fg);
 	z-index: 30;
+	transform: translateX(calc(0px - var(--sidebar-width) - var(--sidebar-resize-indicator-width)));
 }
 
-.sidebar-inner {
-	padding: 1.25rem 0;
+.book.sidebar-visible .sidebar {
+	transform: translateX(0);
 }
 
-.brand {
+html:not(.sidebar-resizing) .sidebar {
+	transition: transform 0.3s;
+}
+
+.sidebar-scrollbox {
+	overflow-y: auto;
+	position: absolute;
+	inset: 0;
+	padding: 10px;
+}
+
+.sidebar-scrollbox::-webkit-scrollbar {
+	background: var(--sidebar-bg);
+	width: 8px;
+}
+.sidebar-scrollbox::-webkit-scrollbar-thumb {
+	background: var(--scrollbar);
+}
+
+.sidebar .sidebar-brand {
 	display: block;
-	padding: 0 1.5rem 1rem;
-	font-size: 1.25rem;
-	font-weight: 700;
+	padding: 6px 10px 10px;
+	font-size: 1.5em;
+	font-weight: 800;
 	letter-spacing: -0.01em;
 	color: var(--sidebar-fg);
 	text-decoration: none;
 }
 
-.toc ol {
-	list-style: none;
+/* 목차 (mdBook .chapter) */
+.chapter {
+	list-style: none outside none;
+	padding-inline-start: 0;
 	margin: 0;
-	padding: 0;
+	line-height: 2.2em;
 }
 
-.toc a {
-	display: flex;
-	flex-direction: column;
-	gap: 0.15rem;
-	padding: 0.5rem 1.5rem;
-	color: var(--sidebar-fg);
+.chapter li.chapter-item {
+	line-height: 1.5em;
+	margin-block-start: 0.6em;
+	color: var(--sidebar-non-existant);
+}
+
+.chapter li a {
+	display: block;
 	text-decoration: none;
-	border-left: 3px solid transparent;
+	color: var(--sidebar-fg);
 }
 
-.toc a:hover {
-	background: var(--sidebar-active-bg);
+.chapter li a:hover {
+	color: var(--sidebar-active);
 }
 
-.toc a.active {
-	background: var(--sidebar-active-bg);
-	color: var(--sidebar-active-fg);
-	border-left-color: var(--accent);
-	font-weight: 600;
+.chapter li a.active {
+	color: var(--sidebar-active);
 }
 
-.toc-title {
-	font-size: 0.95rem;
-	line-height: 1.3;
+.chapter .chapter-date {
+	display: block;
+	font-size: 0.8em;
+	color: var(--sidebar-non-existant);
+	line-height: 1.4;
 }
 
-.toc-date {
-	font-size: 0.75rem;
-	color: var(--muted);
+.spacer {
+	width: 100%;
+	height: 3px;
+	margin: 8px 0;
+	background-color: var(--sidebar-spacer);
 }
 
-/* ── 콘텐츠 영역 ───────────────────────────────────────── */
-.content {
-	margin-left: var(--sidebar-width);
+/* 사이드바 리사이즈 핸들 (mdBook과 동일한 점선 인디케이터) */
+.sidebar-resize-handle {
+	position: absolute;
+	cursor: col-resize;
+	width: calc(var(--sidebar-resize-indicator-width) - var(--sidebar-resize-indicator-space));
+	right: calc(var(--sidebar-resize-indicator-width) * -1);
+	top: 0;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	z-index: 31;
+	padding: 0;
+	border: none;
+	background: none;
+}
+.sidebar-resize-handle:focus-visible {
+	outline: 2px solid var(--sidebar-active);
+}
+
+.sidebar-resize-indicator {
+	width: 100%;
+	height: 16px;
+	color: var(--icons);
+	margin-inline-start: var(--sidebar-resize-indicator-space);
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+.sidebar-resize-indicator::before {
+	content: '';
+	width: 2px;
+	height: 12px;
+	border-left: dotted 2px currentColor;
+}
+.sidebar-resize-indicator::after {
+	content: '';
+	width: 2px;
+	height: 16px;
+	border-left: dotted 2px currentColor;
+}
+
+@media (pointer: coarse) {
+	.sidebar-resize-handle {
+		display: none;
+	}
+}
+
+/* ── 페이지 래퍼 / 콘텐츠 ─────────────────────────────────── */
+.page-wrapper {
+	box-sizing: border-box;
+	background-color: var(--bg);
 	min-height: 100vh;
 }
 
-.topbar {
+html:not(.sidebar-resizing) .page-wrapper {
+	transition:
+		margin-left 0.3s ease,
+		transform 0.3s ease;
+}
+
+@media only screen and (min-width: 620px) {
+	.book.sidebar-visible .page-wrapper {
+		margin-inline-start: calc(var(--sidebar-width) + var(--sidebar-resize-indicator-width));
+	}
+}
+
+@media only screen and (max-width: 619px) {
+	.book.sidebar-visible .page-wrapper {
+		transform: translateX(calc(var(--sidebar-width) + var(--sidebar-resize-indicator-width)));
+	}
+}
+
+/* ── 메뉴 바 ──────────────────────────────────────────────── */
+.menu-bar {
 	position: sticky;
 	top: 0;
+	z-index: 101;
 	display: flex;
+	flex-wrap: nowrap;
 	align-items: center;
-	gap: 0.75rem;
-	height: var(--topbar-height);
-	padding: 0 1.5rem;
-	background: color-mix(in srgb, var(--bg) 88%, transparent);
-	backdrop-filter: blur(6px);
-	border-bottom: 1px solid var(--border);
-	z-index: 20;
+	height: var(--menu-bar-height);
+	background-color: var(--bg);
+	color: var(--icons);
 }
 
-.topbar-title {
-	font-weight: 600;
+.left-buttons {
+	display: flex;
+	margin: 0 5px;
+}
+
+.theme-wrapper {
+	display: inline-flex;
+}
+
+.menu-bar .icon-button {
+	border: none;
+	background: none;
+	color: inherit;
+	padding: 0 8px;
+	height: var(--menu-bar-height);
+	display: inline-flex;
+	align-items: center;
+	cursor: pointer;
+	transition: color 0.15s;
+}
+
+.menu-bar .icon-button:hover {
+	color: var(--icons-hover);
+}
+
+.fa-svg {
+	width: 19px;
+	height: 19px;
+	fill: currentColor;
+	display: block;
+}
+
+.menu-title {
+	flex: 1;
+	margin: 0;
+	font-weight: 200;
+	font-size: 24px;
+	line-height: var(--menu-bar-height);
+	text-align: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	color: var(--fg);
 	text-decoration: none;
-}
-
-.menu-toggle {
-	display: none;
-	flex-direction: column;
-	justify-content: center;
-	gap: 4px;
-	width: 2rem;
-	height: 2rem;
-	padding: 0;
-	background: none;
-	border: none;
 	cursor: pointer;
 }
 
-.menu-toggle span {
+.right-buttons {
+	margin: 0 15px;
+}
+
+/* 테마 팝업 */
+.theme-popup {
+	position: absolute;
+	left: 10px;
+	top: var(--menu-bar-height);
+	z-index: 1000;
+	border-radius: 4px;
+	font-size: 0.8em;
+	color: var(--fg);
+	background: var(--theme-popup-bg);
+	border: 1px solid var(--theme-popup-border);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	overflow: hidden;
+}
+
+.theme-popup .theme {
 	display: block;
-	height: 2px;
-	width: 1.25rem;
-	background: var(--fg);
-	border-radius: 2px;
+	width: 100%;
+	border: 0;
+	margin: 0;
+	padding: 2px 20px;
+	line-height: 25px;
+	white-space: nowrap;
+	text-align: start;
+	cursor: pointer;
+	color: inherit;
+	background: inherit;
+	font-size: inherit;
+	font-family: inherit;
 }
 
-.page {
-	max-width: var(--content-max);
+.theme-popup .theme:hover {
+	background-color: var(--theme-hover);
+}
+
+.theme-popup .theme.theme-selected::before {
+	display: inline-block;
+	content: '✓';
+	margin-inline-start: -14px;
+	width: 14px;
+}
+
+/* 검색 바 */
+.searchbar-outer {
 	margin: 0 auto;
-	padding: 2.5rem 1.5rem 5rem;
+	max-width: var(--content-max-width);
+	padding: 0 var(--page-padding);
 }
 
-/* ── 본문 (typography 보강) ────────────────────────────── */
-/* prettier-plugin-tailwindcss 변수를 테마 토큰에 연결해 라이트/다크 모두 대응 */
+.searchbar {
+	width: 100%;
+	box-sizing: border-box;
+	margin: 5px auto 0;
+	padding: 10px 16px;
+	border: 1px solid var(--theme-popup-border);
+	border-radius: 3px;
+	background-color: var(--bg);
+	color: var(--fg);
+	font-family: inherit;
+	font-size: 1em;
+}
+.searchbar:focus {
+	outline: none;
+	box-shadow: 0 0 3px var(--sidebar-active);
+}
+
+/* ── 본문 영역 ────────────────────────────────────────────── */
+.page {
+	outline: 0;
+	padding: 0 var(--page-padding);
+}
+
+.content {
+	padding: 0 5px 50px;
+	overflow-wrap: break-word;
+}
+
+.content main {
+	margin: 0 auto;
+	max-width: var(--content-max-width);
+}
+
+/* prose 토큰을 테마에 연결 */
 .prose {
 	--tw-prose-body: var(--fg);
 	--tw-prose-headings: var(--fg);
-	--tw-prose-lead: var(--muted);
-	--tw-prose-links: var(--link);
+	--tw-prose-lead: var(--fg);
+	--tw-prose-links: var(--links);
 	--tw-prose-bold: var(--fg);
-	--tw-prose-counters: var(--muted);
-	--tw-prose-bullets: var(--muted);
-	--tw-prose-hr: var(--border);
+	--tw-prose-counters: var(--fg);
+	--tw-prose-bullets: var(--icons);
+	--tw-prose-hr: var(--table-border-color);
 	--tw-prose-quotes: var(--fg);
-	--tw-prose-quote-borders: var(--border);
-	--tw-prose-captions: var(--muted);
-	--tw-prose-code: var(--fg);
+	--tw-prose-quote-borders: var(--quote-border);
+	--tw-prose-captions: var(--icons);
+	--tw-prose-code: var(--inline-code-color);
 	--tw-prose-pre-code: var(--fg);
-	--tw-prose-pre-bg: var(--sidebar-bg);
-	--tw-prose-th-borders: var(--border);
-	--tw-prose-td-borders: var(--border);
+	--tw-prose-pre-bg: var(--quote-bg);
+	--tw-prose-th-borders: var(--table-border-color);
+	--tw-prose-td-borders: var(--table-border-color);
 
 	color: var(--fg);
 	max-width: none;
+	line-height: 1.75;
 }
 
 .prose a {
-	color: var(--link);
+	color: var(--links);
+	text-decoration: none;
+}
+.prose a:hover {
+	text-decoration: underline;
 }
 
-.cover-lead {
-	font-size: 1.15rem;
-	color: var(--muted);
+/* 인라인 코드의 백틱 따옴표 제거 (typography 기본값) */
+.prose :where(code):not(:where(pre code))::before,
+.prose :where(code):not(:where(pre code))::after {
+	content: none;
 }
 
-.cover-date,
-.cover-hint {
-	color: var(--muted);
+.prose blockquote {
+	background-color: var(--quote-bg);
+	border-inline-start-color: var(--quote-border);
 }
 
-/* ── 글 헤더 / 메타 ────────────────────────────────────── */
+/* ── 글 헤더 / 메타 ───────────────────────────────────────── */
 .post-header h1 {
 	margin-bottom: 0.4rem;
 }
@@ -216,22 +544,31 @@ body {
 	align-items: center;
 	gap: 0.6rem;
 	margin-top: 0;
-	color: var(--muted);
+	color: var(--icons);
 	font-size: 0.9rem;
 }
 
 .tag {
-	color: var(--accent);
+	color: var(--sidebar-active);
 }
 
-/* ── 이전/다음 네비게이션 ──────────────────────────────── */
+.cover-lead {
+	font-size: 1.15rem;
+	color: var(--icons);
+}
+
+.cover-date,
+.cover-hint {
+	color: var(--icons);
+}
+
+/* ── 이전/다음 ────────────────────────────────────────────── */
 .post-nav {
 	display: flex;
 	justify-content: space-between;
 	gap: 1rem;
-	max-width: var(--content-max);
-	margin: 0 auto;
-	padding: 2rem 1.5rem 4rem;
+	max-width: var(--content-max-width);
+	margin: 2.5rem auto 0;
 }
 
 .post-nav-link {
@@ -240,14 +577,15 @@ body {
 	gap: 0.2rem;
 	max-width: 48%;
 	padding: 0.75rem 1rem;
-	border: 1px solid var(--border);
+	border: 1px solid var(--table-border-color);
 	border-radius: 0.5rem;
 	text-decoration: none;
 	color: var(--fg);
 }
 
 .post-nav-link:hover {
-	border-color: var(--accent);
+	background-color: var(--theme-hover);
+	border-color: var(--sidebar-active);
 }
 
 .post-nav-link.next {
@@ -257,42 +595,25 @@ body {
 
 .post-nav-dir {
 	font-size: 0.8rem;
-	color: var(--muted);
+	color: var(--icons);
 }
 
 .post-nav-title {
 	font-weight: 600;
 }
 
-/* ── 모바일 오버레이 ───────────────────────────────────── */
+/* ── 모바일 오버레이 ─────────────────────────────────────── */
 .scrim {
 	display: none;
 	position: fixed;
 	inset: 0;
-	background: rgba(0, 0, 0, 0.4);
+	background: var(--overlay-bg);
 	border: none;
 	z-index: 25;
 }
 
-@media (max-width: 900px) {
-	.sidebar {
-		transform: translateX(-100%);
-		transition: transform 0.2s ease;
-	}
-
-	.content {
-		margin-left: 0;
-	}
-
-	.menu-toggle {
-		display: flex;
-	}
-
-	.sidebar-open .sidebar {
-		transform: translateX(0);
-	}
-
-	.sidebar-open .scrim {
+@media only screen and (max-width: 1080px) {
+	.book.sidebar-visible .scrim {
 		display: block;
 	}
 }
