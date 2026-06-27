@@ -478,8 +478,9 @@ html:not(.sidebar-resizing) .page-wrapper {
 		background-color 0.15s;
 }
 
+/* 셰브론 viewBox는 256×512(1:2)이므로 비율 유지 */
 .nav-chapters .fa-svg {
-	width: 40px;
+	width: 20px;
 	height: 40px;
 }
 
