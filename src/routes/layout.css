@@ -8,10 +8,7 @@
 
 /* 레이아웃 상수 */
 :root {
-	--sidebar-target-width: 300px;
-	--sidebar-width: min(var(--sidebar-target-width), 80vw);
-	--sidebar-resize-indicator-width: 8px;
-	--sidebar-resize-indicator-space: 2px;
+	--sidebar-width: min(300px, 80vw);
 	--page-padding: 15px;
 	--content-max-width: 750px;
 	--menu-bar-height: 50px;
@@ -115,15 +112,12 @@ code {
 	background-color: var(--sidebar-bg);
 	color: var(--sidebar-fg);
 	z-index: 30;
-	transform: translateX(calc(0px - var(--sidebar-width) - var(--sidebar-resize-indicator-width)));
+	transform: translateX(calc(0px - var(--sidebar-width)));
+	transition: transform 0.3s;
 }
 
 .book.sidebar-visible .sidebar {
 	transform: translateX(0);
-}
-
-html:not(.sidebar-resizing) .sidebar {
-	transition: transform 0.3s;
 }
 
 .sidebar-scrollbox {
@@ -183,53 +177,6 @@ html:not(.sidebar-resizing) .sidebar {
 	background-color: var(--sidebar-spacer);
 }
 
-/* 사이드바 리사이즈 핸들 (mdBook과 동일한 점선 인디케이터) */
-.sidebar-resize-handle {
-	position: absolute;
-	cursor: col-resize;
-	width: calc(var(--sidebar-resize-indicator-width) - var(--sidebar-resize-indicator-space));
-	right: calc(var(--sidebar-resize-indicator-width) * -1);
-	top: 0;
-	bottom: 0;
-	display: flex;
-	align-items: center;
-	z-index: 31;
-	padding: 0;
-	border: none;
-	background: none;
-}
-.sidebar-resize-handle:focus-visible {
-	outline: 2px solid var(--sidebar-active);
-}
-
-.sidebar-resize-indicator {
-	width: 100%;
-	height: 16px;
-	color: var(--icons);
-	margin-inline-start: var(--sidebar-resize-indicator-space);
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-}
-.sidebar-resize-indicator::before {
-	content: '';
-	width: 2px;
-	height: 12px;
-	border-left: dotted 2px currentColor;
-}
-.sidebar-resize-indicator::after {
-	content: '';
-	width: 2px;
-	height: 16px;
-	border-left: dotted 2px currentColor;
-}
-
-@media (pointer: coarse) {
-	.sidebar-resize-handle {
-		display: none;
-	}
-}
-
 /* ── 페이지 래퍼 / 콘텐츠 ─────────────────────────────────── */
 .page-wrapper {
 	box-sizing: border-box;
@@ -237,7 +184,7 @@ html:not(.sidebar-resizing) .sidebar {
 	min-height: 100vh;
 }
 
-html:not(.sidebar-resizing) .page-wrapper {
+.page-wrapper {
 	transition:
 		margin-left 0.3s ease,
 		transform 0.3s ease;
@@ -245,13 +192,13 @@ html:not(.sidebar-resizing) .page-wrapper {
 
 @media only screen and (min-width: 620px) {
 	.book.sidebar-visible .page-wrapper {
-		margin-inline-start: calc(var(--sidebar-width) + var(--sidebar-resize-indicator-width));
+		margin-inline-start: var(--sidebar-width);
 	}
 }
 
 @media only screen and (max-width: 619px) {
 	.book.sidebar-visible .page-wrapper {
-		transform: translateX(calc(var(--sidebar-width) + var(--sidebar-resize-indicator-width)));
+		transform: translateX(var(--sidebar-width));
 	}
 }
 
@@ -478,10 +425,10 @@ html:not(.sidebar-resizing) .page-wrapper {
 		background-color 0.15s;
 }
 
-/* 셰브론 viewBox는 256×512(1:2)이므로 비율 유지 */
-.nav-chapters .fa-svg {
-	width: 20px;
-	height: 40px;
+/* lucide 셰브론 (viewBox 24×24 정사각) */
+.nav-chapters .nav-icon {
+	width: 34px;
+	height: 34px;
 }
 
 .nav-chapters.previous {
@@ -495,7 +442,7 @@ html:not(.sidebar-resizing) .page-wrapper {
 /* 사이드바가 열려 있으면 이전 화살표를 사이드바 오른쪽으로 */
 @media only screen and (min-width: 620px) {
 	.book.sidebar-visible .nav-chapters.previous {
-		left: calc(var(--sidebar-width) + var(--sidebar-resize-indicator-width));
+		left: var(--sidebar-width);
 	}
 }
 

@@ -23,15 +23,8 @@
 		return window.innerWidth >= 1080;
 	}
 
-	function initWidth(): number {
-		if (typeof localStorage === 'undefined') return 300;
-		const v = Number(localStorage.getItem('lovelog-sidebar-width'));
-		return v >= 150 && v <= 600 ? v : 300;
-	}
-
 	let theme = $state(initTheme());
 	let sidebarVisible = $state(initSidebar());
-	let sidebarWidth = $state(initWidth());
 	let themePopupOpen = $state(false);
 	let themeMenu = $state<HTMLElement>();
 
@@ -73,58 +66,12 @@
 			themePopupOpen = false;
 		}
 	}
-
-	// ── 사이드바 리사이즈 ──
-	let resizing = false;
-
-	function persistWidth() {
-		try {
-			localStorage.setItem('lovelog-sidebar-width', String(sidebarWidth));
-		} catch {
-			/* ignore */
-		}
-	}
-
-	function onResize(e: PointerEvent) {
-		if (!resizing) return;
-		sidebarWidth = Math.min(600, Math.max(150, Math.round(e.clientX)));
-	}
-
-	function endResize() {
-		if (!resizing) return;
-		resizing = false;
-		document.documentElement.classList.remove('sidebar-resizing');
-		window.removeEventListener('pointermove', onResize);
-		persistWidth();
-	}
-
-	function startResize(e: PointerEvent) {
-		e.preventDefault();
-		resizing = true;
-		document.documentElement.classList.add('sidebar-resizing');
-		window.addEventListener('pointermove', onResize);
-		window.addEventListener('pointerup', endResize, { once: true });
-	}
-
-	function onResizeKey(e: KeyboardEvent) {
-		if (e.key === 'ArrowLeft') {
-			sidebarWidth = Math.max(150, sidebarWidth - 10);
-			persistWidth();
-		} else if (e.key === 'ArrowRight') {
-			sidebarWidth = Math.min(600, sidebarWidth + 10);
-			persistWidth();
-		}
-	}
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 <svelte:window onpointerdown={onWindowPointerDown} onkeydown={onWindowKeydown} />
 
-<div
-	class="book"
-	class:sidebar-visible={sidebarVisible}
-	style="--sidebar-target-width: {sidebarWidth}px"
->
+<div class="book" class:sidebar-visible={sidebarVisible}>
 	<nav class="sidebar" aria-label="목차">
 		<div class="sidebar-scrollbox">
 			<ol class="chapter">
@@ -148,15 +95,6 @@
 				{/each}
 			</ol>
 		</div>
-		<button
-			type="button"
-			class="sidebar-resize-handle"
-			aria-label="사이드바 너비 조절"
-			onpointerdown={startResize}
-			onkeydown={onResizeKey}
-		>
-			<span class="sidebar-resize-indicator"></span>
-		</button>
 	</nav>
 
 	<div class="page-wrapper">
