@@ -9,16 +9,13 @@
 
 	const THEMES = [
 		{ id: 'light', label: 'Light' },
-		{ id: 'rust', label: 'Rust' },
-		{ id: 'coal', label: 'Coal' },
-		{ id: 'navy', label: 'Navy' },
-		{ id: 'ayu', label: 'Ayu' }
+		{ id: 'dark', label: 'Dark' }
 	];
 
 	function initTheme(): string {
-		if (typeof document === 'undefined') return 'navy';
+		if (typeof document === 'undefined') return 'dark';
 		const found = THEMES.find((t) => document.documentElement.classList.contains(t.id));
-		return found ? found.id : 'navy';
+		return found ? found.id : 'dark';
 	}
 
 	function initSidebar(): boolean {
@@ -36,15 +33,7 @@
 	let sidebarVisible = $state(initSidebar());
 	let sidebarWidth = $state(initWidth());
 	let themePopupOpen = $state(false);
-	let searchOpen = $state(false);
-	let query = $state('');
 	let themeMenu = $state<HTMLElement>();
-
-	const visiblePosts = $derived.by(() => {
-		const q = query.trim().toLowerCase();
-		if (!q) return data.posts;
-		return data.posts.filter((p) => p.title.toLowerCase().includes(q));
-	});
 
 	function isActive(postId: string): boolean {
 		return page.url.pathname === `/posts/${postId}`;
@@ -82,7 +71,6 @@
 	function onWindowKeydown(e: KeyboardEvent) {
 		if (e.key === 'Escape') {
 			themePopupOpen = false;
-			searchOpen = false;
 		}
 	}
 
@@ -146,7 +134,7 @@
 					>
 				</li>
 				<li class="spacer"></li>
-				{#each visiblePosts as post (post.post_id)}
+				{#each data.posts as post (post.post_id)}
 					<li class="chapter-item">
 						<a
 							href="/posts/{post.post_id}"
@@ -217,37 +205,12 @@
 						</ul>
 					{/if}
 				</div>
-				<button
-					class="icon-button"
-					aria-label="검색"
-					aria-expanded={searchOpen}
-					onclick={() => (searchOpen = !searchOpen)}
-				>
-					<svg class="fa-svg" viewBox="0 0 512 512" aria-hidden="true">
-						<path
-							d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"
-						/>
-					</svg>
-				</button>
 			</div>
 
 			<a class="menu-title" href="/">lovelog</a>
 
 			<div class="right-buttons"></div>
 		</div>
-
-		{#if searchOpen}
-			<div class="searchbar-outer">
-				<!-- svelte-ignore a11y_autofocus -->
-				<input
-					class="searchbar"
-					type="search"
-					placeholder="제목 검색…"
-					bind:value={query}
-					autofocus
-				/>
-			</div>
-		{/if}
 
 		<div class="page">
 			<div class="content">
