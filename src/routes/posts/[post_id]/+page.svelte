@@ -15,12 +15,9 @@
 		</p>
 	</header>
 
-	<!-- content는 본인 CMS에서 온 신뢰된 마크다운 -->
-	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html data.html}
 </article>
 
-<!-- 넓은 화면: mdBook 좌우 화살표 (화면 가장자리 고정) -->
 <nav class="nav-wide-wrapper" aria-label="글 네비게이션">
 	{#if data.prev}
 		<a
@@ -29,7 +26,6 @@
 			aria-label="이전 글: {data.prev.title}"
 			title={data.prev.title}
 		>
-			<!-- lucide: chevron-left -->
 			<svg
 				class="nav-icon"
 				viewBox="0 0 24 24"
@@ -51,7 +47,6 @@
 			aria-label="다음 글: {data.next.title}"
 			title={data.next.title}
 		>
-			<!-- lucide: chevron-right -->
 			<svg
 				class="nav-icon"
 				viewBox="0 0 24 24"
@@ -68,7 +63,6 @@
 	{/if}
 </nav>
 
-<!-- 좁은 화면: 하단 박스 네비 -->
 <nav class="post-nav-mobile" aria-label="이전/다음 글">
 	{#if data.prev}
 		<a class="post-nav-link prev" href="/posts/{data.prev.post_id}">

@@ -10,13 +10,10 @@ export default defineConfig({
 		tailwindcss(),
 		sveltekit({
 			compilerOptions: {
-				// Force runes mode for the project, except for libraries. Can be removed in svelte 6.
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 
-			// SSG: 모든 페이지를 빌드 시점에 프리렌더해 정적 파일로 출력한다.
-			// (정적 호스팅용. 자세한 내용은 https://svelte.dev/docs/kit/adapter-static)
 			adapter: adapter(),
 			preprocess: [mdsvex({ extensions: ['.svx', '.md'] })],
 			extensions: ['.svelte', '.svx', '.md']

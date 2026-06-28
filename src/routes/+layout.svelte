@@ -9,8 +9,6 @@
 
 	let { children, data }: { children: Snippet; data: LayoutData } = $props();
 
-	// 현재 글(글 페이지일 때만 존재). OG 태그를 레이아웃 한 곳에서 중앙 관리해
-	// 라우트별 중복 태그를 피한다.
 	let post = $derived((page.data as { post?: Post }).post);
 	let metaTitle = $derived(post ? `${post.title} · ${SITE_NAME}` : SITE_NAME);
 	let metaDescription = $derived(post?.description || SITE_DESCRIPTION);
@@ -39,8 +37,6 @@
 	let themePopupOpen = $state(false);
 	let themeMenu = $state<HTMLElement>();
 
-	// 화면 너비가 브레이크포인트를 넘나들 때만 사이드바를 기본값으로 스냅
-	// (그 사이의 수동 토글은 유지)
 	let wasWide = isWide();
 	function onWindowResize() {
 		const wide = isWide();
@@ -54,16 +50,13 @@
 		return page.url.pathname === `/posts/${postId}`;
 	}
 
-	// 테마 선택을 <html> 클래스 + localStorage에 반영
 	$effect(() => {
 		const el = document.documentElement;
 		for (const t of THEMES) el.classList.remove(t.id);
 		el.classList.add(theme);
 		try {
 			localStorage.setItem('lovelog-theme', theme);
-		} catch {
-			/* ignore */
-		}
+		} catch {}
 	});
 
 	function selectTheme(id: string) {

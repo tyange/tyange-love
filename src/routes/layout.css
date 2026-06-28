@@ -1,12 +1,6 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
-/* ─────────────────────────────────────────────────────────────
-   lovelog — mdBook(Rust Book) UI 재현
-   테마 변수/크롬 스타일은 doc.rust-lang.org/book 의 CSS를 옮긴 것.
-   ───────────────────────────────────────────────────────────── */
-
-/* 레이아웃 상수 */
 :root {
 	--sidebar-width: min(300px, 80vw);
 	--page-padding: 15px;
@@ -19,7 +13,6 @@
 		Roboto, 'Helvetica Neue', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
 }
 
-/* ── 테마 (mdBook variables.css 그대로) ───────────────────── */
 .light {
 	--bg: hsl(0, 0%, 100%);
 	--fg: hsl(0, 0%, 0%);
@@ -46,7 +39,6 @@
 	--color-scheme: light;
 }
 
-/* dark = mdBook navy 팔레트 */
 .dark {
 	--bg: hsl(226, 23%, 11%);
 	--fg: #bcbdd0;
@@ -73,7 +65,6 @@
 	--color-scheme: dark;
 }
 
-/* ── 베이스 ───────────────────────────────────────────────── */
 html {
 	font-family: var(--body-font);
 	color: var(--fg);
@@ -93,12 +84,10 @@ code {
 	font-size: 0.875em;
 }
 
-/* ── 전체 골격 ────────────────────────────────────────────── */
 .book {
 	min-height: 100vh;
 }
 
-/* ── 사이드바 ─────────────────────────────────────────────── */
 .sidebar {
 	position: fixed;
 	left: 0;
@@ -135,7 +124,6 @@ code {
 	background: var(--scrollbar);
 }
 
-/* 목차 (mdBook .chapter) */
 .chapter {
 	list-style: none outside none;
 	padding-inline-start: 0;
@@ -177,7 +165,6 @@ code {
 	background-color: var(--sidebar-spacer);
 }
 
-/* ── 페이지 래퍼 / 콘텐츠 ─────────────────────────────────── */
 .page-wrapper {
 	box-sizing: border-box;
 	background-color: var(--bg);
@@ -185,15 +172,12 @@ code {
 	transition: margin-left 0.3s ease;
 }
 
-/* 넓은 화면(≥1080px): 사이드바가 본문을 옆으로 밀어 나란히 배치.
-   그 이하: 사이드바를 본문 위로 띄우는 오버레이(아래 .sidebar는 fixed). */
 @media only screen and (min-width: 1080px) {
 	.book.sidebar-visible .page-wrapper {
 		margin-inline-start: var(--sidebar-width);
 	}
 }
 
-/* ── 메뉴 바 ──────────────────────────────────────────────── */
 .menu-bar {
 	position: sticky;
 	top: 0;
@@ -257,7 +241,6 @@ code {
 	margin: 0 15px;
 }
 
-/* 테마 팝업 */
 .theme-popup {
 	position: absolute;
 	left: 10px;
@@ -301,7 +284,6 @@ code {
 	width: 14px;
 }
 
-/* ── 본문 영역 ────────────────────────────────────────────── */
 .page {
 	outline: 0;
 	padding: 0 var(--page-padding);
@@ -317,7 +299,6 @@ code {
 	max-width: var(--content-max-width);
 }
 
-/* prose 토큰을 테마에 연결 */
 .prose {
 	--tw-prose-body: var(--fg);
 	--tw-prose-headings: var(--fg);
@@ -349,7 +330,6 @@ code {
 	text-decoration: underline;
 }
 
-/* 인라인 코드의 백틱 따옴표 제거 (typography 기본값) */
 .prose :where(code):not(:where(pre code))::before,
 .prose :where(code):not(:where(pre code))::after {
 	content: none;
@@ -360,7 +340,6 @@ code {
 	border-inline-start-color: var(--quote-border);
 }
 
-/* ── 글 헤더 / 메타 ───────────────────────────────────────── */
 .post-header h1 {
 	margin-bottom: 0.4rem;
 }
@@ -402,7 +381,6 @@ code {
 	font-size: 1rem;
 }
 
-/* ── 이전/다음 (mdBook 좌우 화살표) ──────────────────────── */
 .nav-chapters {
 	position: fixed;
 	top: 0;
@@ -429,7 +407,6 @@ code {
 		background-color 0.15s;
 }
 
-/* lucide 셰브론 (viewBox 24×24 정사각) */
 .nav-chapters .nav-icon {
 	width: 34px;
 	height: 34px;
@@ -443,14 +420,12 @@ code {
 	right: 0;
 }
 
-/* 사이드바가 열려 있으면 이전 화살표를 사이드바 오른쪽으로 */
 @media only screen and (min-width: 1080px) {
 	.book.sidebar-visible .nav-chapters.previous {
 		left: var(--sidebar-width);
 	}
 }
 
-/* 좁은 화면: 화살표 숨기고 하단 박스 네비 노출 */
 @media only screen and (max-width: 1080px) {
 	.nav-wide-wrapper {
 		display: none;
@@ -502,14 +477,12 @@ code {
 	font-weight: 600;
 }
 
-/* ── 모바일 오버레이 ─────────────────────────────────────── */
 .scrim {
 	display: none;
 	position: fixed;
 	inset: 0;
 	background: var(--overlay-bg);
 	border: none;
-	/* 사이드바(120) 아래, 메뉴바(101) 위 — 본문과 메뉴바를 함께 덮는다 */
 	z-index: 110;
 }
 
