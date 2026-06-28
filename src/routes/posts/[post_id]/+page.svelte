@@ -4,13 +4,6 @@
 	let { data }: { data: PageData } = $props();
 </script>
 
-<svelte:head>
-	<title>{data.post.title} · lovelog</title>
-	{#if data.post.description}
-		<meta name="description" content={data.post.description} />
-	{/if}
-</svelte:head>
-
 <article class="post prose">
 	<header class="post-header">
 		<h1>{data.post.title}</h1>

@@ -2,10 +2,20 @@
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/state';
+	import { OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '$lib/site';
+	import type { Post } from '$lib/cms';
 	import type { Snippet } from 'svelte';
 	import type { LayoutData } from './$types';
 
 	let { children, data }: { children: Snippet; data: LayoutData } = $props();
+
+	// 현재 글(글 페이지일 때만 존재). OG 태그를 레이아웃 한 곳에서 중앙 관리해
+	// 라우트별 중복 태그를 피한다.
+	let post = $derived((page.data as { post?: Post }).post);
+	let metaTitle = $derived(post ? `${post.title} · ${SITE_NAME}` : SITE_NAME);
+	let metaDescription = $derived(post?.description || SITE_DESCRIPTION);
+	let ogType = $derived(post ? 'article' : 'website');
+	let canonical = $derived(SITE_URL + page.url.pathname);
 
 	const THEMES = [
 		{ id: 'light', label: 'Light' },
@@ -80,7 +90,28 @@
 	}
 </script>
 
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
+<svelte:head>
+	<title>{metaTitle}</title>
+	<meta name="description" content={metaDescription} />
+	<link rel="canonical" href={canonical} />
+
+	<meta property="og:site_name" content={SITE_NAME} />
+	<meta property="og:type" content={ogType} />
+	<meta property="og:title" content={metaTitle} />
+	<meta property="og:description" content={metaDescription} />
+	<meta property="og:url" content={canonical} />
+	<meta property="og:image" content={OG_IMAGE} />
+	{#if post?.published_at}
+		<meta property="article:published_time" content={post.published_at} />
+	{/if}
+
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={metaTitle} />
+	<meta name="twitter:description" content={metaDescription} />
+	<meta name="twitter:image" content={OG_IMAGE} />
+
+	<link rel="icon" href={favicon} />
+</svelte:head>
 <svelte:window
 	onresize={onWindowResize}
 	onpointerdown={onWindowPointerDown}
