@@ -36,7 +36,7 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.PRIVATE_SSH_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: 'build/'
           target: ${{ vars.DEPLOY_PATH }}
           strip_components: 1
@@ -48,6 +48,6 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.PRIVATE_SSH_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             sudo nginx -t && sudo systemctl reload nginx
