@@ -41,6 +41,22 @@ SvelteKit으로 만드는 개인 블로그("lovelog")입니다. 블로그 글은
   포맷·린트를 통과시킵니다.
 - oxlint/oxfmt는 `.ts` / `.js`와 `.svelte` 파일을 다룹니다. **타입 검사**는
   `bun run check`(svelte-check)가 담당하므로, 타입 관련 변경 후에는 함께 확인합니다.
+- **주석을 달지 않습니다.** 코드는 이름과 구조로 자명하게 작성하고, 설명용 주석
+  (JSDoc, 섹션 구분, "왜"를 적는 주석 등)을 남기지 않습니다. 기존 주석을 발견하면
+  제거합니다.
+
+---
+
+## 배포
+
+SSG(정적 사이트 생성)로 배포합니다. SvelteKit `@sveltejs/adapter-static`로 전체
+사이트를 프리렌더(`src/routes/+layout.server.ts`의 `export const prerender = true`)하며,
+빌드 출력은 `build/`입니다. 글 데이터는 빌드 시점에 원격 CMS(`PUBLIC_CMS_API_BASE`)에서
+fetch해 HTML에 굽습니다 — 글이 바뀌면 재빌드가 필요합니다.
+
+`main` 푸시 또는 수동 `workflow_dispatch` 시 GitHub Actions(`.github/workflows/main.yml`)가
+빌드 후 AWS Lightsail로 SCP 배포하고 nginx를 reload합니다. 서비스 도메인은
+`love.tyange.com`입니다.
 
 ---
 
